@@ -57,4 +57,18 @@ public class Database {
 
         return this;
     }
+
+    public void close() {
+        try {
+            if(conn != null) {
+                conn.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        if(proxySession != null) {
+            proxySession.disconnect();
+        }
+    }
 }

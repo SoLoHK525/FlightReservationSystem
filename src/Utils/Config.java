@@ -1,6 +1,8 @@
 package Utils;
 
 public class Config {
+    public final static boolean DEBUG = true;
+
     public final static String databaseHost = "orasrv1.comp.hkbu.edu.hk";
     public final static int databasePort = 1521;
 
