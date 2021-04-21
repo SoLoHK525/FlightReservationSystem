@@ -1,4 +1,4 @@
-package Models;
+package models;
 
 public class Flight {
     String flightNumber;
@@ -10,4 +10,9 @@ public class Flight {
 
     double fare;
     int seatLimit;
+
+
+    public static void createTable() {
+        
+    }
 }

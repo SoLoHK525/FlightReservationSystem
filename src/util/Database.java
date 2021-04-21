@@ -1,12 +1,12 @@
-package Utils;
+package util;
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import javax.xml.transform.Result;
+import java.sql.*;
+import java.sql.Date;
 import java.util.Properties;
 
 public class Database {
@@ -23,12 +23,75 @@ public class Database {
         this.database = Config.database;
     }
 
+    public static class Response {
+        public final ResultSet resultSet;
+        public final PreparedStatement statement;
+
+        Response(ResultSet rs, PreparedStatement stm) {
+            this.resultSet = rs;
+            this.statement = stm;
+        }
+
+        public void close() throws SQLException {
+            resultSet.close();
+            statement.close();
+        }
+    }
+
     public static Connection getConnection() {
         if(conn == null) {
             throw new RuntimeException("DatabaseConnection is not initialized, please run Database.connect()");
         }
 
         return conn;
+    }
+
+    private static PreparedStatement formatSQL(String statement, Object ...args) throws SQLException {
+        PreparedStatement stm;
+        stm = conn.prepareStatement(statement);
+
+        for(int i = 0; i < args.length; i++) {
+            Class c = args[i].getClass();
+
+            if (String.class.equals(c)) {
+                stm.setString(i + 1, (String) args[i]);
+            } else if (Integer.class.equals(c)) {
+                stm.setInt(i + 1, (Integer) args[i]);
+            } else if (Double.class.equals(c)) {
+                stm.setDouble(i + 1, (double) args[i]);
+            } else if (Date.class.equals(c)) {
+                stm.setDate(i + 1, (Date) args[i]);
+            } else {
+                throw new SQLException("given object is not supported");
+            }
+        }
+
+        return stm;
+    }
+
+    public static boolean fastQuery(String statement, Object ...args) {
+        try {
+            PreparedStatement stm = formatSQL(statement, args);
+            stm.executeUpdate();
+            stm.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    public static Response query(String statement, Object ...args) {
+        try {
+            PreparedStatement stm = formatSQL(statement, args);
+            ResultSet rs = stm.executeQuery();
+
+            return new Response(rs, stm);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void connect(String username, String password) throws SQLException {

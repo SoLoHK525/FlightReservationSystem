@@ -1,4 +1,4 @@
-package Utils;
+package util;
 
 public class Debug {
     public static void info(String message) {
