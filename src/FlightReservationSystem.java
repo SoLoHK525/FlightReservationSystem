@@ -23,14 +23,7 @@ public class FlightReservationSystem {
         System.out.println("Program running");
 
         if(Config.AUTOFILL) {
-            try {
-                if(Flight.dropTable()) Debug.info("DROPPED TABLE [FLIGHT]");
-                if(Flight.createTable()) Debug.info("CREATED TABLE [FLIGHT]");
-
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            Debug.autoFill();
         }
 
         this.exit(0);
