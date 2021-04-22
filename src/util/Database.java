@@ -48,7 +48,7 @@ public class Database {
 
     private static PreparedStatement formatSQL(String statement, Object ...args) throws SQLException {
         PreparedStatement stm;
-        stm = conn.prepareStatement(statement);
+        stm = getConnection().prepareStatement(statement);
 
         for(int i = 0; i < args.length; i++) {
             Class c = args[i].getClass();
@@ -58,40 +58,30 @@ public class Database {
             } else if (Integer.class.equals(c)) {
                 stm.setInt(i + 1, (Integer) args[i]);
             } else if (Double.class.equals(c)) {
-                stm.setDouble(i + 1, (double) args[i]);
+                stm.setDouble(i + 1, (Double) args[i]);
             } else if (Date.class.equals(c)) {
                 stm.setDate(i + 1, (Date) args[i]);
             } else {
-                throw new SQLException("given object is not supported");
+                throw new SQLException("Failed to serialize object ["+ c.getName() + "] at index: " + (i + 1));
             }
         }
 
         return stm;
     }
 
-    public static boolean fastQuery(String statement, Object ...args) {
-        try {
-            PreparedStatement stm = formatSQL(statement, args);
-            stm.executeUpdate();
-            stm.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+    public static boolean fastQuery(String statement, Object ...args) throws SQLException {
+        PreparedStatement stm = formatSQL(statement, args);
+        stm.executeUpdate();
+        stm.close();
 
         return true;
     }
 
-    public static Response query(String statement, Object ...args) {
-        try {
-            PreparedStatement stm = formatSQL(statement, args);
-            ResultSet rs = stm.executeQuery();
+    public static Response query(String statement, Object ...args) throws SQLException {
+        PreparedStatement stm = formatSQL(statement, args);
+        ResultSet rs = stm.executeQuery();
 
-            return new Response(rs, stm);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return new Response(rs, stm);
     }
 
     public void connect(String username, String password) throws SQLException {

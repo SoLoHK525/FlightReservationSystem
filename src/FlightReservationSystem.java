@@ -1,11 +1,12 @@
-import util.Database;
-import util.Debug;
-import util.GUI;
+import models.Flight;
+import util.*;
+import util.Database.Response;
 import com.jcraft.jsch.JSchException;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public class FlightReservationSystem {
     private final Database db;
@@ -21,28 +22,15 @@ public class FlightReservationSystem {
     private void run() {
         System.out.println("Program running");
 
-        if(Database.fastQuery("INSERT INTO FLIGHT " +
-                            "(Flight_No, Depart, Arrive, Fare, Seat_Limit, Source, Dest) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?)",
-                    "VA120",
-                    new Date(2021, 11, 21),
-                    new Date(2021, 11, 22),
-                    1000,
-                    50,
-                    "Hong Kong",
-                    "Tokyo"
-        )) Debug.info("Inserted");
+        if(Config.AUTOFILL) {
+            try {
+                if(Flight.dropTable()) Debug.info("DROPPED TABLE [FLIGHT]");
+                if(Flight.createTable()) Debug.info("CREATED TABLE [FLIGHT]");
 
-        Database.Response res = Database.query("SELECT Flight_No FROM FLIGHT");
 
-        try {
-            while (res.resultSet.next()) {
-                System.out.println(res.resultSet.getString(1));
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-
-            res.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
 
         this.exit(0);

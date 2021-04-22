@@ -1,7 +1,11 @@
 package util;
 
 public class Config {
-    public final static boolean DEBUG = true;
+    // Toggle Debug Output
+    public static boolean DEBUG = false;
+
+    // Auto Filling Test Data to database
+    public static boolean AUTOFILL = false;
 
     public final static String databaseHost = "orasrv1.comp.hkbu.edu.hk";
     public final static int databasePort = 1521;
