@@ -55,7 +55,7 @@ public class Debug {
                     new Flight("CX106", "New York", "LA", departureDates[6], arrivalDates[6], 5000, 3),
                     new Flight("CX107", "Beijing", "Tokyo", departureDates[7], arrivalDates[7], 1500, 3),
             };
-            
+
             int addedFlight = 0;
             for (Flight flight : flights) {
                 if (flight.addFlight()) ++addedFlight;

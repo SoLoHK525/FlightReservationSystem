@@ -11,8 +11,8 @@ import java.text.SimpleDateFormat;
 public class Example {
     public static void addFlight() {
         try {
-            Date departureTime = DateTime.convertUtilDateToSqlDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2020-05-25 23:10:10"));
-            Date arrivalTime = DateTime.convertUtilDateToSqlDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2020-05-26 10:32:10"));
+            Date departureTime = DateTime.convertUtilDateToSqlDate(new SimpleDateFormat("yyyy/MM/ddHH:mm:ss").parse("2020/05/2523:10:10"));
+            Date arrivalTime = DateTime.convertUtilDateToSqlDate(new SimpleDateFormat("yyyy/MM/ddHH:mm:ss").parse("2020/05/2610:32:10"));
 
             Flight f = new Flight("VA105", "Hong Kong", "Tokyo", departureTime, arrivalTime, 3000, 50);
 
