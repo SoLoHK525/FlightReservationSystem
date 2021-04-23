@@ -13,19 +13,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("Testing Flight Class")
 class FlightTest implements IDatabaseTest {
-    @org.junit.jupiter.api.Test
+    @Test
     @Order(1)
     void dropTable() throws SQLException {
         Assertions.assertEquals(true, Flight.dropTable());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     @Order(2)
     void createTable() throws SQLException {
         assertEquals(true, Flight.createTable());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     @Order(3)
     void addFlight() throws SQLException, DateTime.InvalidDateException {
         Date[] departureDates = new Date[]{
