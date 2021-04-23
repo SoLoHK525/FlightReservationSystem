@@ -9,59 +9,43 @@ import java.text.SimpleDateFormat;
 
 public class Debug {
     public static void info(String message) {
-        if(Config.DEBUG)
+        if (Config.DEBUG)
             System.out.println("[DEBUG] [INFO] " + message);
     }
 
     public static void info(String format, Object... args) {
-        if(Config.DEBUG)
+        if (Config.DEBUG)
             System.out.printf("[DEBUG] [INFO] " + format, args);
     }
 
     public static void autoFill() {
         try {
-            if(Flight.dropTable()) Debug.info("DROPPED TABLE [FLIGHT]");
-            if(Flight.createTable()) Debug.info("CREATED TABLE [FLIGHT]");
+            if (Flight.dropTable()) Debug.info("DROPPED TABLE [FLIGHT]");
+            if (Flight.createTable()) Debug.info("CREATED TABLE [FLIGHT]");
 
-            Date[] departureDates = new Date[8];
-            Date[] arrivalDates = new Date[8];
-            int i = 0;
-            for(String d : new String[] {
-                    "2015-3-15 12:00:00",
-                    "2015-3-15 18:30:00",
-                    "2015-3-15 10:00:00",
-                    "2015-3-15 15:00:00",
-                    "2015-3-15 10:00:00",
-                    "2015-3-15 4:00:00",
-                    "2015-3-15 23:40:00",
-                    "2015-3-15 8:00:00",
-            }) {
-                try {
-                    departureDates[i++] = DateTime.convertUtilDateToSqlDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(d));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
+            Date[] departureDates = new Date[]{
+                    DateTime.getDate(2015, 3, 15, 12, 0, 0),
+                    DateTime.getDate(2015, 3, 15, 18, 30, 0),
+                    DateTime.getDate(2015, 3, 15, 10, 0, 0),
+                    DateTime.getDate(2015, 3, 15, 15, 0, 0),
+                    DateTime.getDate(2015, 3, 15, 10, 0, 0),
+                    DateTime.getDate(2015, 3, 15, 4, 0, 0),
+                    DateTime.getDate(2015, 3, 15, 23, 40, 0),
+                    DateTime.getDate(2015, 3, 15, 8, 0, 0),
+            };
 
-            i = 0;
-            for(String d : new String[] {
-                    "2015-3-15 16:00:00",
-                    "2015-3-15 23:30:00",
-                    "2015-3-15 13:00:00",
-                    "2015-3-15 18:00:00",
-                    "2015-3-15 14:00:00",
-                    "2015-3-15 9:00:00",
-                    "2015-3-16 3:00:00",
-                    "2015-3-15 11:00:00",
-            }) {
-                try {
-                    arrivalDates[i++] = DateTime.convertUtilDateToSqlDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(d));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
+            Date[] arrivalDates = new Date[]{
+                    DateTime.getDate(2015, 3, 15, 16, 0, 0),
+                    DateTime.getDate(2015, 3, 15, 23, 30, 0),
+                    DateTime.getDate(2015, 3, 15, 13, 0, 0),
+                    DateTime.getDate(2015, 3, 15, 18, 0, 0),
+                    DateTime.getDate(2015, 3, 15, 14, 0, 0),
+                    DateTime.getDate(2015, 3, 15, 9, 0, 0),
+                    DateTime.getDate(2015, 3, 16, 3, 0, 0),
+                    DateTime.getDate(2015, 3, 15, 11, 0, 0),
+            };
 
-            Flight[] flights = new Flight[] {
+            Flight[] flights = new Flight[]{
                     new Flight("CX100", "HK", "Tokyo", departureDates[0], arrivalDates[0], 2000, 3),
                     new Flight("CX101", "Tokyo", "New York", departureDates[1], arrivalDates[1], 4000, 3),
                     new Flight("CX102", "HK", "Beijing", departureDates[2], arrivalDates[2], 2000, 1),
@@ -71,14 +55,14 @@ public class Debug {
                     new Flight("CX106", "New York", "LA", departureDates[6], arrivalDates[6], 5000, 3),
                     new Flight("CX107", "Beijing", "Tokyo", departureDates[7], arrivalDates[7], 1500, 3),
             };
-
+            
             int addedFlight = 0;
-            for(Flight flight : flights) {
-                if(flight.addFlight()) ++addedFlight;
+            for (Flight flight : flights) {
+                if (flight.addFlight()) ++addedFlight;
             }
-            Debug.info("Added %d flights\n", addedFlight);
 
-        } catch (SQLException e) {
+            Debug.info("Added %d flights\n", addedFlight);
+        } catch (SQLException | DateTime.InvalidDateException e) {
             e.printStackTrace();
         }
     }
