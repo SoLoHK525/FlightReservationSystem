@@ -13,14 +13,22 @@ public class Database {
     private Session proxySession;
     private static Connection conn = null;
 
+    private static Database instance;
+
     private String hostname;
     private int port;
     private String database;
 
     public Database() {
+        if(instance != null) {
+            instance.close();
+        }
+
         this.hostname = Config.databaseHost;
         this.port = Config.databasePort;
         this.database = Config.database;
+
+        instance = this;
     }
 
     public static class Response {
@@ -36,6 +44,10 @@ public class Database {
             resultSet.close();
             statement.close();
         }
+    }
+
+    public static Database getInstance() {
+        return instance;
     }
 
     public static Connection getConnection() {

@@ -1,6 +1,7 @@
 package test;
 
 import com.jcraft.jsch.JSchException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import util.Database;
 
@@ -30,6 +31,12 @@ interface IDatabaseTest {
             throw new RuntimeException("DBPASSWORD is empty");
         }
 
-        new Database().useProxy(proxyUser, proxyPassword).connect(dbUser, dbPassword);
+        new Database().useProxy(proxyUser, proxyPassword);
+        Database.getInstance().connect(dbUser, dbPassword);
+    }
+
+    @AfterAll
+    static void close() {
+        Database.getInstance().close();
     }
 }

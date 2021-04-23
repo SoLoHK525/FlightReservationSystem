@@ -4,8 +4,6 @@ import models.Flight;
 
 import java.sql.Date;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 public class Debug {
     public static void info(String message) {
