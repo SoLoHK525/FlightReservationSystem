@@ -1,9 +1,10 @@
-CREATE TABLE FLIGHT (
-    Flight_No CHAR(8),
-    Depart DATE,
-    Arrive DATE,
-    Fare INT,
-    Seat_Limit INT,
-    Source VARCHAR(32),
-    Dest VARCHAR(32)
+CREATE TABLE FLIGHTS (
+    FLIGHT_NO CHAR(8),
+    DEPART_TIME DATE,
+    ARRIVE_TIME DATE,
+    FARE INT,
+    SEAT_LIMIT INT,
+    SOURCE VARCHAR(32),
+    DEST VARCHAR(32),
+    PRIMARY KEY(FLIGHT_NO)
 )

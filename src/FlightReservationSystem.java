@@ -9,14 +9,19 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class FlightReservationSystem {
-    private final Database db;
-
     public FlightReservationSystem() {
-        db = new Database();
+        new Database();
 
-        this.boostrap();
+        if(Config.DEBUG) {
+            try {
+                this.debugBootstrap();
+            } catch (JSchException | SQLException e) {
+                e.printStackTrace();
+            }
+        }else{
+            this.boostrap();
+        }
         this.run();
-
     }
 
     private void run() {
@@ -29,12 +34,37 @@ public class FlightReservationSystem {
         this.exit(0);
     }
 
+    public static void debugBootstrap() throws JSchException, SQLException {
+        String proxyUser = System.getenv("PROXYUSER");
+        String proxyPassword = System.getenv("PROXYPASSWORD");
+        String dbUser = System.getenv("DBUSER");
+        String dbPassword = System.getenv("DBPASSWORD");
+
+        if (proxyUser == null || proxyUser.isEmpty()) {
+            throw new RuntimeException("PROXYUSER is empty");
+        }
+
+        if (proxyPassword == null || proxyPassword.isEmpty()) {
+            throw new RuntimeException("PROXYUSER is empty");
+        }
+
+        if (dbUser == null || dbUser.isEmpty()) {
+            throw new RuntimeException("DBUSER is empty");
+        }
+
+        if (dbPassword == null || dbPassword.isEmpty()) {
+            throw new RuntimeException("DBPASSWORD is empty");
+        }
+
+        Database.getInstance().useProxy(proxyUser, proxyPassword).connect(dbUser, dbPassword);
+    }
+
     private void boostrap() {
         if(GUI.promptYesNo("Deploy ssh tunneling?")) {
             String[] input = GUI.promptUsernameAndPassword("Input your ssh credentials");
 
             try {
-                db.useProxy(input[0], input[1]);
+                Database.getInstance().useProxy(input[0], input[1]);
 
                 Debug.info("Proxy created");
             }catch (JSchException e) {
@@ -48,7 +78,7 @@ public class FlightReservationSystem {
         String[] input = GUI.promptUsernameAndPassword("Input your database credentials");
 
         try {
-            db.connect(input[0], input[1]);
+            Database.getInstance().connect(input[0], input[1]);
 
             Debug.info("Connected to database");
         } catch (SQLException e) {
@@ -60,8 +90,7 @@ public class FlightReservationSystem {
     }
 
     public void exit(int exitCode) {
-        db.close();
-
+        Database.getInstance().close();
         System.exit(exitCode);
     }
 }

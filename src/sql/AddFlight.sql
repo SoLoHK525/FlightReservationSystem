@@ -1,9 +1,9 @@
-INSERT INTO FLIGHT (
-    Flight_No,
-    Depart,
-    Arrive,
-    Fare,
-    Seat_Limit,
-    Source,
-    Dest
+INSERT INTO FLIGHTS (
+    FLIGHT_NO,
+    DEPART_TIME,
+    ARRIVE_TIME,
+    FARE,
+    SEAT_LIMIT,
+    SOURCE,
+    DEST
 ) VALUES (?, ?, ?, ?, ?, ?, ?)
