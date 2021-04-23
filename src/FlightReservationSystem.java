@@ -14,7 +14,7 @@ public class FlightReservationSystem {
 
         if(Config.DEBUG) {
             try {
-                this.debugBootstrap();
+                Debug.bootstrap();
             } catch (JSchException | SQLException e) {
                 e.printStackTrace();
             }
@@ -32,31 +32,6 @@ public class FlightReservationSystem {
         }
 
         this.exit(0);
-    }
-
-    public static void debugBootstrap() throws JSchException, SQLException {
-        String proxyUser = System.getenv("PROXYUSER");
-        String proxyPassword = System.getenv("PROXYPASSWORD");
-        String dbUser = System.getenv("DBUSER");
-        String dbPassword = System.getenv("DBPASSWORD");
-
-        if (proxyUser == null || proxyUser.isEmpty()) {
-            throw new RuntimeException("PROXYUSER is empty");
-        }
-
-        if (proxyPassword == null || proxyPassword.isEmpty()) {
-            throw new RuntimeException("PROXYUSER is empty");
-        }
-
-        if (dbUser == null || dbUser.isEmpty()) {
-            throw new RuntimeException("DBUSER is empty");
-        }
-
-        if (dbPassword == null || dbPassword.isEmpty()) {
-            throw new RuntimeException("DBPASSWORD is empty");
-        }
-
-        Database.getInstance().useProxy(proxyUser, proxyPassword).connect(dbUser, dbPassword);
     }
 
     private void boostrap() {
