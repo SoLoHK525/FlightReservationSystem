@@ -1,45 +1,32 @@
-package models;
+package test;
 
-import com.jcraft.jsch.JSchException;
+import models.Flight;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Order;
 import util.Database;
 import util.DateTime;
-import util.Debug;
 
 import java.sql.Date;
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class FlightTest {
+class FlightTest implements IDatabaseTest {
+    @org.junit.jupiter.api.Test
+    @Order(1)
+    void dropTable() throws SQLException {
+        Assertions.assertEquals(true, Flight.dropTable());
+    }
 
     @org.junit.jupiter.api.Test
-    void addFlight() throws JSchException, SQLException, DateTime.InvalidDateException {
-        String proxyUser = System.getenv("PROXYUSER");
-        String proxyPassword = System.getenv("PROXYPASSWORD");
-        String dbUser = System.getenv("DBUSER");
-        String dbPassword = System.getenv("DBPASSWORD");
+    @Order(2)
+    void createTable() throws SQLException {
+        assertEquals(true, Flight.createTable());
+    }
 
-        if (proxyUser == null || proxyUser.isEmpty()) {
-            throw new RuntimeException("PROXYUSER is empty");
-        }
-
-        if (proxyPassword == null || proxyPassword.isEmpty()) {
-            throw new RuntimeException("PROXYUSER is empty");
-        }
-
-        if (dbUser == null || dbUser.isEmpty()) {
-            throw new RuntimeException("DBUSER is empty");
-        }
-
-        if (dbPassword == null || dbPassword.isEmpty()) {
-            throw new RuntimeException("DBPASSWORD is empty");
-        }
-
-        new Database().useProxy(proxyUser, proxyPassword).connect(dbUser, dbPassword);
-
-        if (Flight.dropTable()) Debug.info("DROPPED TABLE [FLIGHT]");
-        if (Flight.createTable()) Debug.info("CREATED TABLE [FLIGHT]");
-
+    @org.junit.jupiter.api.Test
+    @Order(3)
+    void addFlight() throws SQLException, DateTime.InvalidDateException {
         Date[] departureDates = new Date[]{
                 DateTime.getDate(2015, 3, 15, 12, 0, 0),
                 DateTime.getDate(2015, 3, 15, 18, 30, 0),
@@ -80,9 +67,9 @@ class FlightTest {
         Database.Response res = Database.query("SELECT Flight_No FROM FLIGHT");
         String buffer = "";
         while(res.resultSet.next()){
-            buffer += res.resultSet.getString(1).trim();
+            buffer += res.resultSet.getString(1).trim() + " ";
         }
 
-        assertEquals("CX100CX101CX102CX103CX104CX105CX106CX107", buffer);
+        assertEquals("CX100 CX101 CX102 CX103 CX104 CX105 CX106 CX107", buffer.trim());
     }
 }
