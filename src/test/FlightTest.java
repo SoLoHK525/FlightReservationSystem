@@ -1,8 +1,7 @@
 package test;
 
 import models.Flight;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.*;
 import util.Database;
 import util.DateTime;
 
@@ -11,6 +10,8 @@ import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DisplayName("Testing Flight Class")
 class FlightTest implements IDatabaseTest {
     @org.junit.jupiter.api.Test
     @Order(1)
