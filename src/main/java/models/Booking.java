@@ -3,23 +3,44 @@ package models;
 import util.Database;
 import util.Debug;
 
-import java.awt.print.Book;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Booking {
-    String id;
-    String customer_id;
-    int fare;
+    private int id;
+    private String customer_id;
+    private double fare;
 
-    public Booking(String customer_id, int fare) {
+    public Booking(String customer_id, double fare) {
         this.customer_id = customer_id;
         this.fare = fare;
     }
 
-    public int addBooking() throws SQLException {
-        final String addBookingStatement = "";
+    public int getId() {
+        return this.id;
+    }
 
-        return Database.fastQuery(addBookingStatement);
+    public String getFormattedId() {
+        return "B" + (this.id < 10 ? "0" + this.id : this.id);
+    }
+
+    public int addBooking() throws SQLException {
+        final String addBookingStatement = "INSERT INTO BOOKINGS (CUSTOMER_ID, FARE) VALUES (?, ?)";
+
+        String[] returnCol = { "ID" };
+        Database.FastQueryResponse res = Database.fastQueryWithReturn(addBookingStatement, returnCol, this.customer_id, this.fare);
+
+        ResultSet rs = res.statement.getGeneratedKeys();
+
+        if(res.affectedRows == 0) {
+            throw new SQLException("NO ROWS IS INSERTED");
+        }
+
+        if(rs.next()) {
+            this.id = rs.getInt(1);
+        }
+
+        return this.id;
     }
 
     public static boolean truncateTable() throws SQLException {
@@ -42,9 +63,9 @@ public class Booking {
         final String createTableStatement = "CREATE TABLE BOOKINGS (\n" +
                 "    ID INT,\n" +
                 "    CUSTOMER_ID CHAR(6),\n" +
-                "    FARE INT,\n" +
+                "    FARE REAL,\n" +
                 "    PRIMARY KEY(ID),\n" +
-                "    CONSTRAINT FK_CUSTOMER_ID FOREIGN KEY(CUSTOMER_ID) REFERENCES CUSTOMERS(ID)\n" +
+                "    CONSTRAINT FK_CUSTOMER_ID FOREIGN KEY(CUSTOMER_ID) REFERENCES CUSTOMERS(ID) ON DELETE CASCADE\n" +
                 ")";
 
 
@@ -72,5 +93,23 @@ public class Booking {
         if (Booking.createTable()) Debug.info("CREATED TABLE [BOOKINGS]");
 
         if(Booking.createTrigger()) Debug.info("CREATED TRIGGER FOR TABLE [BOOKINGS]");
+    }
+
+    public static boolean deleteTuple(String bookingID) throws SQLException {
+        try {
+            int id = Integer.parseInt(bookingID.replaceAll("B", ""));
+
+            final String deleteTupleStatement = "DELETE FROM BOOKINGS WHERE ID = ?";
+
+            return Database.fastQuery(deleteTupleStatement, id) == 1;
+        }catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    public boolean deleteTuple() throws SQLException{
+            final String deleteTupleStatement = "DELETE FROM BOOKINGS WHERE ID = ?";
+
+            return Database.fastQuery(deleteTupleStatement, this.id) == 1;
     }
 }

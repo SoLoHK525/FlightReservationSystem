@@ -46,6 +46,20 @@ public class Database {
         }
     }
 
+    public static class FastQueryResponse {
+        public final int affectedRows;
+        public final PreparedStatement statement;
+
+        FastQueryResponse(int ar, PreparedStatement stm) {
+            this.affectedRows = ar;
+            this.statement = stm;
+        }
+
+        public void close() throws SQLException {
+            statement.close();
+        }
+    }
+
     public static Database getInstance() {
         return instance;
     }
@@ -58,9 +72,13 @@ public class Database {
         return conn;
     }
 
-    private static PreparedStatement formatSQL(String statement, Object ...args) throws SQLException {
+    private static PreparedStatement formatSQL(String statement, String[] returnFields, Object ...args) throws SQLException {
         PreparedStatement stm;
-        stm = getConnection().prepareStatement(statement);
+        if(returnFields == null) {
+            stm = getConnection().prepareStatement(statement);
+        } else {
+            stm = getConnection().prepareStatement(statement, returnFields);
+        }
 
         for(int i = 0; i < args.length; i++) {
             Class c = args[i].getClass();
@@ -90,15 +108,22 @@ public class Database {
     }
 
     public static int fastQuery(String statement, Object ...args) throws SQLException {
-        PreparedStatement stm = formatSQL(statement, args);
+        PreparedStatement stm = formatSQL(statement, null, args);
         int result = stm.executeUpdate();
         stm.close();
 
         return result;
     }
 
+    public static FastQueryResponse fastQueryWithReturn(String statement, String[] returnFields, Object ...args) throws SQLException {
+        PreparedStatement stm = formatSQL(statement, returnFields, args);
+        int result = stm.executeUpdate();
+
+        return new FastQueryResponse(result, stm);
+    }
+
     public static Response query(String statement, Object ...args) throws SQLException {
-        PreparedStatement stm = formatSQL(statement, args);
+        PreparedStatement stm = formatSQL(statement, null, args);
         ResultSet rs = stm.executeQuery();
 
         return new Response(rs, stm);
@@ -107,7 +132,7 @@ public class Database {
     public void connect(String username, String password) throws SQLException {
         final String URL = String.format("jdbc:oracle:thin:@%s:%d/%s", this.hostname, this.port, this.database);
 
-        System.out.println("Logging " + URL + " ...");
+        Debug.info("Logging " + URL + " ...");
         conn = DriverManager.getConnection(URL, username, password);
     }
 

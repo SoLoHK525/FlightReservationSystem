@@ -2,11 +2,13 @@ package test;
 
 import models.Flight;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 import util.Database;
 import util.DateTime;
 
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -14,20 +16,26 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisplayName("Testing Flight Class")
 class FlightTest implements IDatabaseTest {
     @Test
+    @DisplayName("Drop Table")
     @Order(1)
     void dropTable() throws SQLException {
         Assertions.assertEquals(true, Flight.dropTable());
     }
 
     @Test
+    @DisplayName("Create Table")
     @Order(2)
     void createTable() throws SQLException {
         assertEquals(true, Flight.createTable());
     }
 
     @Test
-    @Order(3)
+    @DisplayName("Adding Flights")
+    @Order(4)
     void addFlight() throws SQLException, DateTime.InvalidDateException {
+        ArrayList<String> flightsInfo = Flight.getAllFlightsInfo();
+        int len = flightsInfo.size();
+
         Date[] departureDates = new Date[]{
                 DateTime.getDate(2015, 3, 15, 12, 0, 0),
                 DateTime.getDate(2015, 3, 15, 18, 30, 0),
@@ -62,15 +70,63 @@ class FlightTest implements IDatabaseTest {
         };
 
         for (Flight flight : flights) {
-            flight.addFlight();
+            assertEquals(true, flight.addFlight());
         }
 
         Database.Response res = Database.query("SELECT Flight_No FROM FLIGHT");
         String buffer = "";
+
         while(res.resultSet.next()){
             buffer += res.resultSet.getString(1).trim() + " ";
         }
 
+        res.close();
+
         assertEquals("CX100 CX101 CX102 CX103 CX104 CX105 CX106 CX107", buffer.trim());
+        assertEquals(len, flightsInfo.size());
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("Get Flight Info")
+    void addExistedFlight() throws SQLException, DateTime.InvalidDateException {
+        Flight f = new Flight("CX100",
+                "HK",
+                "Tokyo",
+                DateTime.getDate(2015, 3, 15, 12, 0, 0),
+                DateTime.getDate(2015, 3, 15, 16, 0, 0), 2000, 3
+        );
+
+        assertEquals(false, f.addFlight());
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("Get Flight Info")
+    void getFlightInfo() throws SQLException {
+        String info = Flight.getFlightInfo("CX100");
+
+        String expected = "Flight_no: CX100\n" +
+                "Depart_Time: 2015-03-15 12:00:00\n" +
+                "Arrive_Time 2015-03-15 16:00:00\n" +
+                "Fare: 2000\n" +
+                "Seat Limit: 3\n" +
+                "Source: HK\n" +
+                "Dest: Tokyo";
+        assertEquals(expected, info);
+    }
+
+    @Test
+    @Order(6)
+    @DisplayName("Delete flight")
+    void deleteFlight() throws SQLException {
+        assertEquals(1, Flight.deleteFlight("CX100"));
+    }
+
+    @Test
+    @Order(7)
+    @DisplayName("Delete not exist flight")
+    void deleteNotExistFlight() throws SQLException {
+        assertEquals(0, Flight.deleteFlight("XD123"));
     }
 }
