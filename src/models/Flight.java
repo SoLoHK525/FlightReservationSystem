@@ -28,7 +28,7 @@ public class Flight {
         this.seatLimit = seatLimit;
     }
 
-    public boolean addFlight() throws SQLException {
+    public int addFlight() throws SQLException {
         /**
          * sql/AddFlight.sql
          */
@@ -56,13 +56,13 @@ public class Flight {
     public static boolean truncateTable() throws SQLException {
         final String truncateTableStatement = "TRUNCATE TABLE FLIGHTS";
 
-        return Database.fastQuery(truncateTableStatement);
+        return Database.fastQuery(truncateTableStatement) == 0;
     }
 
     public static boolean dropTable() throws SQLException {
         final String dropTableStatement = "DROP TABLE FLIGHTS CASCADE CONSTRAINT";
 
-        return Database.fastQuery(dropTableStatement);
+        return Database.fastQuery(dropTableStatement) == 0;
     }
 
     public static boolean createTable() throws SQLException {
@@ -81,7 +81,7 @@ public class Flight {
                 "    PRIMARY KEY(FLIGHT_NO)\n" +
                 ")";
 
-        return Database.fastQuery(createTableStatement);
+        return Database.fastQuery(createTableStatement) == 0;
     }
 
     public static void autofill() throws DateTime.InvalidDateException, SQLException {
@@ -128,7 +128,7 @@ public class Flight {
 
         int addedFlight = 0;
         for (Flight flight : flights) {
-            if (flight.addFlight()) ++addedFlight;
+            if (flight.addFlight() >= 0) ++addedFlight;
         }
 
         Debug.info("Added %d flights\n", addedFlight);

@@ -81,12 +81,20 @@ public class Database {
         return stm;
     }
 
-    public static boolean fastQuery(String statement, Object ...args) throws SQLException {
-        PreparedStatement stm = formatSQL(statement, args);
-        stm.executeUpdate();
+    public static int fastQuery(String statement) throws SQLException {
+        Statement stm = getConnection().createStatement();
+        int result = stm.executeUpdate(statement);
         stm.close();
 
-        return true;
+        return result;
+    }
+
+    public static int fastQuery(String statement, Object ...args) throws SQLException {
+        PreparedStatement stm = formatSQL(statement, args);
+        int result = stm.executeUpdate();
+        stm.close();
+
+        return result;
     }
 
     public static Response query(String statement, Object ...args) throws SQLException {
