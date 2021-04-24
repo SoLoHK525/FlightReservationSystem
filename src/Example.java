@@ -16,7 +16,7 @@ public class Example {
 
             Flight f = new Flight("VA105", "Hong Kong", "Tokyo", departureTime, arrivalTime, 3000, 50);
 
-            if(f.addFlight()) {
+            if(f.addFlight() >= 0) {
                 Debug.info("Added Flight");
             }
         }catch(SQLException | ParseException e) {

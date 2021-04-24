@@ -18,7 +18,7 @@ public class Customer {
         this.passport_num = passport_num;
     }
 
-    public boolean addCustomer() throws SQLException {
+    public int addCustomer() throws SQLException {
         /**
          * sql/AddCustomer.sql
          */
@@ -32,13 +32,13 @@ public class Customer {
     public static boolean truncateTable() throws SQLException {
         final String truncateTableStatement = "TRUNCATE TABLE CUSTOMERS";
 
-        return Database.fastQuery(truncateTableStatement);
+        return Database.fastQuery(truncateTableStatement) == 0;
     }
 
     public static boolean dropTable() throws SQLException {
         final String dropTableStatement = "DROP TABLE CUSTOMERS CASCADE CONSTRAINT";
 
-        return Database.fastQuery(dropTableStatement);
+        return Database.fastQuery(dropTableStatement) == 0;
     }
 
     public static boolean createTable() throws SQLException {
@@ -55,13 +55,14 @@ public class Customer {
                 "    UNIQUE (PASSPORT_NO)\n" +
                 ")";
 
-        return Database.fastQuery(createTableStatement);
+        return Database.fastQuery(createTableStatement) == 0;
     }
 
     public static void autofill() throws SQLException {
         try {
             if (Customer.dropTable()) Debug.info("DROPPED TABLE [CUSTOMERS]");
         }catch(SQLException e) {
+            e.printStackTrace();
             Debug.info("TABLE [CUSTOMERS] DOES NOT EXIST");
         }
 
@@ -75,7 +76,7 @@ public class Customer {
 
         int addedCustomer = 0;
         for(Customer c : customers) {
-            if(c.addCustomer()) ++addedCustomer;
+            if(c.addCustomer() >= 0) ++addedCustomer;
         }
 
         Debug.info("Added %d customers\n", addedCustomer);
