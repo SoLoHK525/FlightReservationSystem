@@ -15,6 +15,5 @@ public class Program {
             }
         }
         new FlightReservationSystem();
-        // made some changes
     }
 }
