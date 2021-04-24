@@ -1,6 +1,7 @@
 package util;
 
 import com.jcraft.jsch.JSchException;
+import models.Booking;
 import models.Customer;
 import models.Flight;
 
@@ -22,6 +23,7 @@ public class Debug {
         try {
             Flight.autofill();
             Customer.autofill();
+            Booking.autofill();
         } catch (SQLException | DateTime.InvalidDateException e) {
             e.printStackTrace();
         }
