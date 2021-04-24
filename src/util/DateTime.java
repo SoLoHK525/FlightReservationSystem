@@ -4,8 +4,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class DateTime {
+    public static java.util.Date convertSqlDateToUtilDate(java.sql.Date s) { return new java.sql.Date(s.getTime()); }
     public static java.sql.Date convertUtilDateToSqlDate(java.util.Date u) {
         return new java.sql.Date(u.getTime());
+    }
+
+    public static String formatDate(java.sql.Date d) {
+        java.util.Date date = convertSqlDateToUtilDate(d);
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
     }
 
     public static java.sql.Date getDate(String dateString) throws InvalidDateException {
