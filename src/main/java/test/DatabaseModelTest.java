@@ -214,6 +214,32 @@ class DatabaseModelTest implements IDatabaseTest {
 
     @Nested
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @DisplayName("Testing Booking Model")
+    class BookingTest {
+        @Test
+        @DisplayName("Drop Table")
+        @Order(1)
+        void dropTable() throws SQLException {
+            assertTrue(Booking.dropTable());
+        }
+
+        @Test
+        @DisplayName("Create Table")
+        @Order(2)
+        void createTable() throws SQLException {
+            assertTrue(Booking.createTable());
+        }
+
+        @Test
+        @DisplayName("Create Trigger")
+        @Order(2)
+        void createTrigger() throws SQLException {
+            assertTrue(Booking.createTrigger());
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @DisplayName("Testing Customer Model")
     class CustomerTest {
         @Test
