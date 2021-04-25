@@ -190,7 +190,15 @@ public class Flight {
     public static boolean dropTable() throws SQLException {
         final String dropTableStatement = "DROP TABLE FLIGHTS CASCADE CONSTRAINT";
 
-        return Database.fastQuery(dropTableStatement) == 0;
+        try {
+            return Database.fastQuery(dropTableStatement) == 0;
+        } catch (SQLException e) {
+            if(e.getMessage().contains("table or view does not exist")) {
+                return true;
+            }else{
+                throw e;
+            }
+        }
     }
 
     public static boolean createTrigger() throws SQLException {
@@ -203,7 +211,7 @@ public class Flight {
                 "DECLARE\n" +
                 "COUNTS INTEGER;\n" +
                 "BEGIN\n" +
-                "    SELECT COUNT(*) INTO COUNTS FROM CONNECTIONS WHERE FLIGHT_NO = :old.FLIGHT_NO;\n" +
+                "    SELECT COUNT(*) INTO COUNTS FROM CONNECTIONS WHERE FLIGHT_NO = :OLD.FLIGHT_NO;\n" +
                 "\n" +
                 "    IF(COUNTS > 0) THEN\n" +
                 "        RAISE_APPLICATION_ERROR(-20000, 'FLIGHT_HAS_CONNECTIONS');\n" +

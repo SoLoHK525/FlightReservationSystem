@@ -88,27 +88,6 @@ class DatabaseModelTest implements IDatabaseTest {
     @DisplayName("Testing Flight Model")
     class FlightTest {
         @Test
-        @DisplayName("Drop Table")
-        @Order(1)
-        void dropTable() throws SQLException {
-            assertTrue(Flight.dropTable());
-        }
-
-        @Test
-        @DisplayName("Create Table")
-        @Order(2)
-        void createTable() throws SQLException {
-            assertTrue(Flight.createTable());
-        }
-
-        @Test
-        @DisplayName("Create Trigger")
-        @Order(2)
-        void createTrigger() throws SQLException {
-            assertTrue(Flight.createTrigger());
-        }
-
-        @Test
         @DisplayName("Adding Flights")
         @Order(4)
         void addFlight() throws SQLException, DateTime.InvalidDateException {
@@ -214,48 +193,21 @@ class DatabaseModelTest implements IDatabaseTest {
 
     @Nested
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @DisplayName("Testing Connection Model")
+    class ConnectionTest {
+    }
+
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @DisplayName("Testing Booking Model")
     class BookingTest {
-        @Test
-        @DisplayName("Drop Table")
-        @Order(1)
-        void dropTable() throws SQLException {
-            assertTrue(Booking.dropTable());
-        }
-
-        @Test
-        @DisplayName("Create Table")
-        @Order(2)
-        void createTable() throws SQLException {
-            assertTrue(Booking.createTable());
-        }
-
-        @Test
-        @DisplayName("Create Trigger")
-        @Order(2)
-        void createTrigger() throws SQLException {
-            assertTrue(Booking.createTrigger());
-        }
     }
 
     @Nested
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @DisplayName("Testing Customer Model")
     class CustomerTest {
-        @Test
-        @DisplayName("Drop Table")
-        @Order(1)
-        void dropTable() throws SQLException {
-            assertTrue(Customer.dropTable());
-        }
-
-        @Test
-        @DisplayName("Create Table")
-        @Order(2)
-        void createTable() throws SQLException {
-            assertTrue(Customer.createTable());
-        }
-
         @Test
         @DisplayName("Add Customer")
         @Order(3)
@@ -274,28 +226,85 @@ class DatabaseModelTest implements IDatabaseTest {
 
     @Nested
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @DisplayName("Testing Connection Model")
-    class ConnectionTest {
+    @DisplayName("Creating Tables")
+    class CreateTables {
         @Test
-        @DisplayName("Drop Table")
+        @DisplayName("Drop Customer Table")
+        @Order(0)
+        void dropCustomerTable() throws SQLException {
+            assertTrue(Customer.dropTable());
+        }
+
+        @Test
+        @DisplayName("Create Customer Table")
         @Order(1)
-        void dropTable() throws SQLException {
+        void createCustomerTable() throws SQLException {
+            assertTrue(Customer.createTable());
+        }
+
+        @Test
+        @DisplayName("Drop Booking Table")
+        @Order(0)
+        void dropBookingTable() throws SQLException {
+            assertTrue(Booking.dropTable());
+        }
+
+        @Test
+        @DisplayName("Create Booking Table")
+        @Order(2)
+        void createBookingTable() throws SQLException {
+            assertTrue(Booking.createTable());
+        }
+
+        @Test
+        @DisplayName("Create Booking Trigger")
+        @Order(5)
+        void createBookingTrigger() throws SQLException {
+            assertTrue(Booking.createTrigger());
+        }
+
+
+        @Test
+        @DisplayName("Drop Connection Table")
+        @Order(0)
+        void dropConnectionTable() throws SQLException {
             assertTrue(Connection.dropTable());
         }
 
         @Test
-        @DisplayName("Create Table")
-        @Order(2)
-        void createTable() throws SQLException {
+        @DisplayName("Create Connection Table")
+        @Order(3)
+        void createConnectionTable() throws SQLException {
             assertTrue(Connection.createTable());
         }
 
         @Test
-        @DisplayName("Create Trigger")
-        @Order(2)
-        void createTrigger() throws SQLException {
+        @DisplayName("Create Connection Trigger")
+        @Order(5)
+        void createConnectionTrigger() throws SQLException {
             assertTrue(Connection.createCancelBookingTrigger());
             assertTrue(Connection.createCheckSeatLimitTrigger());
+        }
+
+        @Test
+        @DisplayName("Drop Flight Table")
+        @Order(0)
+        void dropTable() throws SQLException {
+            assertTrue(Flight.dropTable());
+        }
+
+        @Test
+        @DisplayName("Create Flight Table")
+        @Order(1)
+        void createTable() throws SQLException {
+            assertTrue(Flight.createTable());
+        }
+
+        @Test
+        @DisplayName("Create Flight Trigger")
+        @Order(5)
+        void createTrigger() throws SQLException {
+            assertTrue(Flight.createTrigger());
         }
     }
 }

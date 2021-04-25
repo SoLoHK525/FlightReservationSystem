@@ -70,7 +70,15 @@ public class Connection {
     public static boolean dropTable() throws SQLException {
         final String dropTableStatement = "DROP TABLE CONNECTIONS CASCADE CONSTRAINT";
 
-        return Database.fastQuery(dropTableStatement) == 0;
+        try {
+            return Database.fastQuery(dropTableStatement) == 0;
+        } catch (SQLException e) {
+            if(e.getMessage().contains("table or view does not exist")) {
+                return true;
+            }else{
+                throw e;
+            }
+        }
     }
 
     public int addConnection() throws SQLException {
