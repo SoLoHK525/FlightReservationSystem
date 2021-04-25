@@ -19,8 +19,8 @@ public class Connection {
          * sql/CreateConnectionTable.sql.sql
          */
         final String createTableStatement = "CREATE TABLE CONNECTIONS (\n" +
-                "     ID INT,\n" +
-                "     FLIGHT_NO VARCHAR(8),\n" +
+                "     ID INT NOT NULL,\n" +
+                "     FLIGHT_NO VARCHAR(8) NOT NULL,\n" +
                 "     PRIMARY KEY (ID, FLIGHT_NO),\n" +
                 "     FOREIGN KEY(ID) REFERENCES BOOKINGS(ID),\n" +
                 "     FOREIGN KEY(FLIGHT_NO) REFERENCES FLIGHTS(FLIGHT_NO)\n" +

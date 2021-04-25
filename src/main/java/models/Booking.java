@@ -40,6 +40,8 @@ public class Booking {
             this.id = rs.getInt(1);
         }
 
+        res.close();
+
         return this.id;
     }
 
@@ -61,9 +63,9 @@ public class Booking {
          */
 
         final String createTableStatement = "CREATE TABLE BOOKINGS (\n" +
-                "    ID INT,\n" +
-                "    CUSTOMER_ID CHAR(6),\n" +
-                "    FARE REAL,\n" +
+                "    ID INT NOT NULL,\n" +
+                "    CUSTOMER_ID CHAR(6) NOT NULL,\n" +
+                "    FARE REAL NOT NULL,\n" +
                 "    PRIMARY KEY(ID),\n" +
                 "    CONSTRAINT FK_CUSTOMER_ID FOREIGN KEY(CUSTOMER_ID) REFERENCES CUSTOMERS(ID) ON DELETE CASCADE\n" +
                 ")";

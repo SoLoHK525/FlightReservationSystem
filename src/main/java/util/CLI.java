@@ -18,6 +18,12 @@ public class CLI {
         return instance;
     }
 
+    /**
+     * Prompt a user
+     * @param question Prompting question
+     * @param args formatting rules in String.format
+     * @return user input
+     */
     public String prompt(String question, Object... args) {
         System.out.println("[?] " + String.format(question, args));
         System.out.print("> ");
@@ -25,6 +31,13 @@ public class CLI {
         return scanner.nextLine();
     }
 
+    /**
+     * Prompt a user with answer split
+     * @param question Prompting question
+     * @param separator Separator for splitting the string
+     * @param args formatting rules in String.format
+     * @return split-ed user input
+     */
     public String[] promptSplit(String question, String separator, Object... args) {
         String ans = prompt(question, args);
         String[] arr = ans.split(separator);
@@ -36,6 +49,11 @@ public class CLI {
         return arr;
     }
 
+    /**
+     * Display an option menu
+     * @param options String array of options
+     * @return selected index of option
+     */
     public int options(String[] options) {
         while (true) {
             for (int i = 0; i < options.length; i++) {
@@ -56,17 +74,6 @@ public class CLI {
                 continue;
             }
         }
-    }
-
-    public static void main(String[] args) {
-        CLI cli = new CLI();
-
-        String[] options = new String[]{
-                "Are you gay?",
-                "Are you not gay?"
-        };
-
-        System.out.println("User picked" + cli.options(options));
     }
 
     public void close() {

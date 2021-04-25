@@ -81,11 +81,12 @@ public class Flight {
             );
         }
 
+        res.close();
+
         return "";
     }
 
     public static ArrayList<String> searchFlight(String departure, String destination, int stop, int hour) throws SQLException {
-        ArrayList<Database.Response> res = new ArrayList<>();
         ArrayList<String> arr = new ArrayList<>();
 
         if (stop == 1) {
@@ -108,13 +109,13 @@ public class Flight {
                 "    WHERE SOURCE = ? AND DEST = ?\n" +
                 "    AND (ARRIVE_TIME - DEPART_TIME) * 24 <= ?\n", departure, destination, hour);
         ArrayList<String> arr = new ArrayList<>();
-        int count = 0;
+
         while (res.resultSet.next()) {
-            count++;
             String flight_no = res.resultSet.getString(1);
             int fare = res.resultSet.getInt(2);
             arr.add(String.format("%s, fare: %d", flight_no, fare));
         }
+        res.close();
         return arr;
     }
 
@@ -126,15 +127,14 @@ public class Flight {
                 "  AND (F2.ARRIVE_TIME - F1.DEPART_TIME) * 24 <= ?", departure, destination, hour);
 
         ArrayList<String> arr = new ArrayList<>();
-        int count = 0;
         while (res.resultSet.next()) {
-            count++;
             String flight_no1 = res.resultSet.getString(1);
             String flight_no2 = res.resultSet.getString(2);
             int fare = res.resultSet.getInt(3);
             arr.add(String.format
-                    ("%s->%s, fare: %d", flight_no1, flight_no2, fare));
+                    ("%s->%s, fare: %d", flight_no1, flight_no2, (int)(fare * 0.9)));
         }
+        res.close();
         return arr;
     }
 
@@ -146,16 +146,16 @@ public class Flight {
                 "  AND(F2.DEST = F3.SOURCE AND F2.ARRIVE_TIME <= F3.DEPART_TIME)\n" +
                 "  AND(F3.ARRIVE_TIME - F1.DEPART_TIME) * 24 <= ?", departure, destination, hour);
         ArrayList<String> arr = new ArrayList<>();
-        int count = 0;
         while (res.resultSet.next()) {
-            count++;
             String flight_no1 = res.resultSet.getString(1);
             String flight_no2 = res.resultSet.getString(2);
             String flight_no3 = res.resultSet.getString(3);
             int fare = res.resultSet.getInt(4);
             arr.add(String.format
-                    ("%s->%s->%s, fare: %d", flight_no1, flight_no2, flight_no3, fare));
+                    ("%s->%s->%s, fare: %d", flight_no1, flight_no2, flight_no3, (int)(fare * 0.75)));
         }
+
+        res.close();
         return arr;
     }
 
@@ -166,9 +166,12 @@ public class Flight {
         Database.Response res = Database.query(FareQueryStatement, flightNumber);
 
         if (res.resultSet.next()) {
-            return res.resultSet.getInt(1);
+            int value = res.resultSet.getInt(1);
+            res.close();
+            return value;
         }
 
+        res.close();
         throw new SQLException("FLIGHT_DOES_NOT_EXISTS");
     }
 
@@ -191,11 +194,20 @@ public class Flight {
     }
 
     public static boolean createTrigger() throws SQLException {
+        /**
+         * sql/DeleteFlightTrigger.sql
+         */
         final String createTableTrigger = "CREATE OR REPLACE TRIGGER DELETE_FLIGHT_TRIGGER\n" +
                 "BEFORE DELETE ON FLIGHTS\n" +
                 "FOR EACH ROW\n" +
+                "DECLARE\n" +
+                "COUNTS INTEGER;\n" +
                 "BEGIN\n" +
-                "    DELETE FROM CONNECTIONS WHERE FLIGHT_NO = :old.FLIGHT_NO;\n" +
+                "    SELECT COUNT(*) INTO COUNTS FROM CONNECTIONS WHERE FLIGHT_NO = :old.FLIGHT_NO;\n" +
+                "\n" +
+                "    IF(COUNTS > 0) THEN\n" +
+                "        RAISE_APPLICATION_ERROR(-20000, 'FLIGHT_HAS_CONNECTIONS');\n" +
+                "    END IF;\n" +
                 "END;";
 
         return Database.fastQuery(createTableTrigger) == 0;
@@ -207,13 +219,13 @@ public class Flight {
          */
 
         final String createTableStatement = "CREATE TABLE FLIGHTS (\n" +
-                "    FLIGHT_NO VARCHAR(8),\n" +
-                "    DEPART_TIME DATE,\n" +
-                "    ARRIVE_TIME DATE,\n" +
-                "    FARE INT,\n" +
-                "    SEAT_LIMIT INT,\n" +
-                "    SOURCE VARCHAR(32),\n" +
-                "    DEST VARCHAR(32),\n" +
+                "    FLIGHT_NO VARCHAR(8) NOT NULL,\n" +
+                "    DEPART_TIME DATE NOT NULL,\n" +
+                "    ARRIVE_TIME DATE NOT NULL,\n" +
+                "    FARE INT NOT NULL,\n" +
+                "    SEAT_LIMIT INT NOT NULL,\n" +
+                "    SOURCE VARCHAR(32) NOT NULL,\n" +
+                "    DEST VARCHAR(32) NOT NULL,\n" +
                 "    PRIMARY KEY(FLIGHT_NO)\n" +
                 ")";
 

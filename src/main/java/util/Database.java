@@ -4,7 +4,6 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
-import javax.xml.transform.Result;
 import java.sql.*;
 import java.sql.Date;
 import java.util.Properties;
@@ -46,6 +45,10 @@ public class Database {
         }
     }
 
+    /**
+     * A fast query response that exposes affectedRows
+     * and the PreparedStatement Object to retrieve changed columns
+     */
     public static class FastQueryResponse {
         public final int affectedRows;
         public final PreparedStatement statement;
@@ -99,6 +102,12 @@ public class Database {
         return stm;
     }
 
+    /**
+     * Execute fast query to the database (executeUpdate)
+     * @param statement SQL Statement
+     * @return affectedRows or the values returned from stm.executeUpdate
+     * @throws SQLException
+     */
     public static int fastQuery(String statement) throws SQLException {
         Statement stm = getConnection().createStatement();
         int result = stm.executeUpdate(statement);
@@ -107,6 +116,13 @@ public class Database {
         return result;
     }
 
+    /**
+     * Execute fast query to the database (executeUpdate) with parameters injection
+     * @param statement SQL Statement
+     * @param args parameters to be injected
+     * @return affectedRows or the values returned from stm.executeUpdate
+     * @throws SQLException
+     */
     public static int fastQuery(String statement, Object ...args) throws SQLException {
         PreparedStatement stm = formatSQL(statement, null, args);
         int result = stm.executeUpdate();
@@ -115,6 +131,15 @@ public class Database {
         return result;
     }
 
+    /**
+     * Execute fast query to the database (executeUpdate) with parameters injection and generated keys returning
+     * see https://stackoverflow.com/questions/4224228/preparedstatement-with-statement-return-generated-keys
+     * @param statement SQL Statement
+     * @param returnFields Fields to be returned, see
+     * @param args parameters to be injected
+     * @return FastQueryResponse
+     * @throws SQLException
+     */
     public static FastQueryResponse fastQueryWithReturn(String statement, String[] returnFields, Object ...args) throws SQLException {
         PreparedStatement stm = formatSQL(statement, returnFields, args);
         int result = stm.executeUpdate();
@@ -122,6 +147,13 @@ public class Database {
         return new FastQueryResponse(result, stm);
     }
 
+    /**
+     * Execute query to the database (executeQuery) with parameters injection
+     * @param statement SQL Statement
+     * @param args parameters to be injected
+     * @return Response with ResultSet and PreparedStatement
+     * @throws SQLException
+     */
     public static Response query(String statement, Object ...args) throws SQLException {
         PreparedStatement stm = formatSQL(statement, null, args);
         ResultSet rs = stm.executeQuery();
@@ -129,6 +161,12 @@ public class Database {
         return new Response(rs, stm);
     }
 
+    /**
+     * Initialize connection to the database
+     * @param username username
+     * @param password password
+     * @throws SQLException
+     */
     public void connect(String username, String password) throws SQLException {
         final String URL = String.format("jdbc:oracle:thin:@%s:%d/%s", this.hostname, this.port, this.database);
 
@@ -136,11 +174,17 @@ public class Database {
         conn = DriverManager.getConnection(URL, username, password);
     }
 
+    /**
+     * Initialize a proxy using ssh tunneling
+     * @param username username to the target ssh server
+     * @param password password to the target ssh server
+     * @throws SQLException
+     */
     public Database useProxy(String username, String password) throws JSchException {
         this.proxySession = new JSch().getSession(username, Config.proxyHost, Config.proxyPort);
         this.proxySession.setPassword(password);
 
-        // Disable ssh host public key checking
+        // Disable validation on ssh host public key
         Properties config = new Properties();
         config.put("StrictHostKeyChecking", "no");
 
@@ -156,6 +200,9 @@ public class Database {
         return this;
     }
 
+    /**
+     * Closing handles
+     */
     public void close() {
         try {
             if(conn != null) {
