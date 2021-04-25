@@ -5,11 +5,3 @@ CREATE TABLE CONNECTIONS (
      FOREIGN KEY(ID) REFERENCES BOOKINGS(ID),
      FOREIGN KEY(FLIGHT_NO) REFERENCES FLIGHTS(FLIGHT_NO)
 )
-
--- CREATE TABLE CONNECTIONS (
---                              ID INT,
---                              FLIGHT_NO VARCHAR(8),
---                              PRIMARY KEY (ID, FLIGHT_NO),
---                              FOREIGN KEY(ID) REFERENCES BOOKINGS(ID) ON DELETE CASCADE,
---                              FOREIGN KEY(FLIGHT_NO) REFERENCES FLIGHTS(FLIGHT_NO) ON DELETE CASCADE
--- )
