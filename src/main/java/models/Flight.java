@@ -108,9 +108,8 @@ public class Flight {
                 "    WHERE SOURCE = ? AND DEST = ?\n" +
                 "    AND (ARRIVE_TIME - DEPART_TIME) * 24 <= ?\n", departure, destination, hour);
         ArrayList<String> arr = new ArrayList<>();
-        int count = 0;
+
         while (res.resultSet.next()) {
-            count++;
             String flight_no = res.resultSet.getString(1);
             int fare = res.resultSet.getInt(2);
             arr.add(String.format("%s, fare: %d", flight_no, fare));
@@ -194,8 +193,14 @@ public class Flight {
         final String createTableTrigger = "CREATE OR REPLACE TRIGGER DELETE_FLIGHT_TRIGGER\n" +
                 "BEFORE DELETE ON FLIGHTS\n" +
                 "FOR EACH ROW\n" +
+                "DECLARE\n" +
+                "COUNTS INTEGER;\n" +
                 "BEGIN\n" +
-                "    DELETE FROM CONNECTIONS WHERE FLIGHT_NO = :old.FLIGHT_NO;\n" +
+                "    SELECT COUNT(*) INTO COUNTS FROM CONNECTIONS WHERE FLIGHT_NO = :old.FLIGHT_NO;\n" +
+                "\n" +
+                "    IF(COUNTS > 0) THEN\n" +
+                "        RAISE_APPLICATION_ERROR(-20000, 'FLIGHT_HAS_CONNECTIONS');\n" +
+                "    END IF;\n" +
                 "END;";
 
         return Database.fastQuery(createTableTrigger) == 0;

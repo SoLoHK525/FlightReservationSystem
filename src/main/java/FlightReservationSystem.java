@@ -144,12 +144,21 @@ public class FlightReservationSystem {
                 }
             } else if(options == 3) {
                 String deleteFlightId = cli.prompt("Flight ID to be deleted: ");
-                int deletedRows = Flight.deleteFlight(deleteFlightId);
 
-                if(deletedRows == 0) {
-                    System.out.printf("Flight [%s] not found.\n", deleteFlightId);
-                }else{
-                    System.out.printf("Succeed to delete the flight %s\n", deleteFlightId);
+                try {
+                    int deletedRows = Flight.deleteFlight(deleteFlightId);
+
+                    if (deletedRows == 0) {
+                        System.out.printf("Flight [%s] not found.\n", deleteFlightId);
+                    } else {
+                        System.out.printf("Succeed to delete the flight %s\n", deleteFlightId);
+                    }
+                } catch(SQLException e) {
+                    if(e.getMessage().contains("FLIGHT_HAS_CONNECTIONS")) {
+                        System.out.printf("Failed to delete flight: flight already has connections %s\n", deleteFlightId);
+                    }else{
+                        throw e;
+                    }
                 }
             }else if(options == 4) {
                 // exit to main menu
