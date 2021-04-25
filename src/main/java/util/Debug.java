@@ -6,7 +6,6 @@ import models.Connection;
 import models.Customer;
 import models.Flight;
 
-import java.sql.Date;
 import java.sql.SQLException;
 
 public class Debug {
@@ -20,6 +19,9 @@ public class Debug {
             System.out.printf("[INFO] " + format, args);
     }
 
+    /**
+     * Auto filling the database for debugging
+     */
     public static void autoFill() {
         try {
             Flight.autofill();
@@ -31,6 +33,13 @@ public class Debug {
         }
     }
 
+    /**
+     * Bootstrap for debugging
+     * Auto connects to the database using the credentials
+     * provided in ENVIRONMENTAL VARIABLES
+     * @throws JSchException
+     * @throws SQLException
+     */
     public static void bootstrap() throws JSchException, SQLException {
         String proxyUser = System.getenv("PROXYUSER");
         String proxyPassword = System.getenv("PROXYPASSWORD");

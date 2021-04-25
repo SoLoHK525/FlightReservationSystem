@@ -47,10 +47,10 @@ public class Customer {
          */
 
         final String createTableStatement = "CREATE TABLE CUSTOMERS (\n" +
-                "    ID CHAR(6),\n" +
-                "    NAME VARCHAR(32),\n" +
-                "    NATIONALITY CHAR(5),\n" +
-                "    PASSPORT_NO CHAR(8),\n" +
+                "    ID CHAR(6) NOT NULL,\n" +
+                "    NAME VARCHAR(32) NOT NULL,\n" +
+                "    NATIONALITY CHAR(5)  NOT NULL,\n" +
+                "    PASSPORT_NO CHAR(8) NOT NULL,\n" +
                 "    PRIMARY KEY (ID),\n" +
                 "    UNIQUE (PASSPORT_NO)\n" +
                 ")";

@@ -4,6 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GUI {
+    /**
+     * Prompt a Yes-No question from user
+     * @param message Prompting message
+     * @return true if the user picked [YES] otherwise false
+     */
     public static boolean promptYesNo(String message) {
         JPanel panel = new JPanel();
         panel.add(new JLabel(message));
@@ -16,6 +21,11 @@ public class GUI {
         return result;
     }
 
+    /**
+     * Prompt username and password from user
+     * @param title Prompting title
+     * @return String Array with the length of 2, 0: username | 1: password
+     */
     public static String[] promptUsernameAndPassword(String title) {
         JPanel panel = new JPanel();
         final TextField usernameField = new TextField();

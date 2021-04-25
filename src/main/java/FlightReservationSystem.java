@@ -53,13 +53,13 @@ public class FlightReservationSystem {
                         this.flightManagement();
                         break;
                     case 1:
-                        this.flightSearch();
+                        this.searchFlight();
                         break;
                     case 2:
-                        this.flightBooking();
+                        this.bookFlight();
                         break;
                     case 3:
-                        this.flightCanceling();
+                        this.cancelFlight();
                         break;
                     case 4:
                         System.out.println("Bye!");
@@ -167,7 +167,7 @@ public class FlightReservationSystem {
         }
     }
 
-    public void flightSearch() throws SQLException {
+    public void searchFlight() throws SQLException {
         System.out.println("Flight search: ");
         CLI cli = CLI.getInstance();
 
@@ -200,7 +200,7 @@ public class FlightReservationSystem {
         }
     }
 
-    public void flightBooking() throws SQLException {
+    public void bookFlight() throws SQLException {
         CLI cli = CLI.getInstance();
         System.out.println("Flight booking: ");
         String example = "C01, CX105, CX104";
@@ -244,7 +244,7 @@ public class FlightReservationSystem {
         } catch(SQLException e) {
             if(e.getMessage().contains("No Seat Left")) {
                 b.deleteTuple();
-                System.out.println("Fail to book a flight for " + parameters[0] + ", Book id is " + b.getFormattedId());
+                System.out.println("Fail to book a flight for " + parameters[0] + ", your booking has been canceled");
                 System.out.println("Reason: No Seat Left");
                 return;
             }else{
@@ -266,7 +266,7 @@ public class FlightReservationSystem {
         return sumOfFares;
     }
 
-    public void flightCanceling() throws SQLException{
+    public void cancelFlight() throws SQLException{
         CLI cli = CLI.getInstance();
         System.out.println("Flight Canceling: ");
         String example = "C01, B1";
